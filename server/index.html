@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <canvas id="canv" width="128" height="128"></canvas>
+        <script>
+            window.addEventListener('load', () => {
+            const canvas = document.getElementById('canv');
+            const ctx = canvas.getContext('2d');
+            const sse = new EventSource('/serial');
+            sse.addEventListener('img', (ev) => {
+                console.log(ev.data);
+            })
+            });
+        </script>
+    </body>
+</html>
