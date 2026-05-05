@@ -5,11 +5,14 @@
 #include <stdlib.h>
 #include <SdFat.h>
 #include <sdios.h>
+#include <ArduinoJson.h>
 #include "Interface.h"
 
-#define MPLIBERR(err) interface.error(F(err))
-#define MPLIBFN(fn, err) if (!fn) interface.error(F(err))
+#define MPLIBERR(err) interface->error(F(err))
+#define MPLIBFN(fn, err) if (!fn) interface->error(F(err))
 #define LLLOOP(type, init, i) (type *i = init; i->next != nullptr; i = i->next)
+
+const char *DEF_CONFIG = F("{}");
 
 struct Artist {
   char *name;
@@ -26,13 +29,25 @@ class Library {
 public:
   struct Artist *artists;
   struct Album *albums;
+  JsonDocument config;
   
-  Library(SdExFat _fs, Interface iface):
+  Library(SdExFat *_fs, Interface *iface):
   fs(_fs), interface(iface),
-  artists(nullptr), albums(nullptr) {}
+  artists(nullptr), albums(nullptr) {
+    fs->chdir();
+    initCfg();
+    initDb();
+  }
+  void initCfg() {
+    ExFile file;
+    if (fs->exists(".config.json")) {
+      file = fs->open(".config.json", O_READ);
+      DeserializationError err = deserializeJson(config, file);
+      if (!err) return;
+    }
 
+  }
   void initDb() {
-    fs.chdir();
     if (!artist || !albums) freeDb();
     ExFile root;
     MPLIBFN(root.open("/"), "open root");
@@ -80,8 +95,8 @@ public:
     freeDb();
   }
 private:
-  SdExFat fs;
-  Interface interface;
+  SdExFat *fs;
+  Interface *interface;
 };
 
 #endif
