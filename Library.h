@@ -26,13 +26,13 @@ class Library {
 public:
   struct Artist *artists;
   struct Album *albums;
+  
   Library(SdExFat _fs, Interface iface):
   fs(_fs), interface(iface),
-  artists(nullptr), albums(nullptr) {
-    fs.chdir();
-    initDb();
-  }
+  artists(nullptr), albums(nullptr) {}
+
   void initDb() {
+    fs.chdir();
     if (!artist || !albums) freeDb();
     ExFile root;
     MPLIBFN(root.open("/"), "open root");
