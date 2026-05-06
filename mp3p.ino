@@ -8,13 +8,16 @@
 		TX			5V
 		RX			GND
 		1			3v3
-		2			13
-		3			12	
+		2			13	encoder 2
+		3			12	encoder 1
 		4			11	SCLK
 		5			10	MOSI
 		6			9	SCR DC
 SDCS	7			8	SCR CS
 */
+
+#define ENCODER_1 12
+#define ENCODER_2 13
 
 #define SD_MOSI 10
 #define SD_SCLK 11
